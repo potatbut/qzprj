@@ -2,7 +2,8 @@
 
 A small quiz application on VUE
 
-![quiz](https://miro.medium.com/max/4000/1*ksqetoj5e76WpJHuUcMAQg.gif "quiz")
+![quiz](https://mir-s3-cdn-cf.behance.net/project_modules/disp/93ab70113245205.602c0a3df1d7d.gif "quiz")
+
 
 ## Classic:
 
