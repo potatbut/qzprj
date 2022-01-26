@@ -2,7 +2,7 @@
 
 A small quiz application on VUE
 
-![quiz](https://cdn.dribbble.com/users/1628015/screenshots/12521092/media/7cdb530aae4e09388c144c17143f4ca8.gif "quiz")
+![quiz](https://miro.medium.com/max/4000/1*ksqetoj5e76WpJHuUcMAQg.gif "quiz")
 
 ## Classic:
 
