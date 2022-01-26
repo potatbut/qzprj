@@ -2,8 +2,9 @@
 
 A small quiz application on VUE
 
-![quiz](https://mir-s3-cdn-cf.behance.net/project_modules/disp/93ab70113245205.602c0a3df1d7d.gif "quiz")
+## It's only begining! (App in progress)
 
+![quiz](https://i.gifer.com/3qh2.gif "quiz") 
 
 ## Classic:
 
