@@ -2,10 +2,8 @@
 
 A small quiz application on VUE
 
-<img src="https://cdn.dribbble.com/users/1628015/screenshots/12521092/media/7cdb530aae4e09388c144c17143f4ca8.gif " width="250">
+![quiz](https://cdn.dribbble.com/users/1628015/screenshots/12521092/media/7cdb530aae4e09388c144c17143f4ca8.gif "quiz")
 
-
-------------
 ## Classic:
 
 ### Project setup:
