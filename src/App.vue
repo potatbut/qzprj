@@ -13,48 +13,50 @@
             </div>
           </div>
         </div>
-        <div class="quiz-main" ref="main">
-          <div class="quiz-head">
-            <div class="quiz-head__question-number">
-              Question number
-              {{ questionIndex + 1 }}/
-              {{ quiz.questions.length }}
+        <transition-group name="fade">
+          <div class="quiz-main" ref="main" :v-if="show" :key="quiz">
+            <div class="quiz-head">
+              <div class="quiz-head__question-number">
+                Question number
+                {{ questionIndex + 1 }}/
+                {{ quiz.questions.length }}
+              </div>
+
+              <div class="quiz-head__question-text">
+                {{ quiz.questions[questionIndex].text }}
+              </div>
+
+              <div class="quiz-head__image">
+                <img :src="quiz.questions[questionIndex].image" alt="cover" />
+              </div>
             </div>
 
-            <div class="quiz-head__question-text">
-              {{ quiz.questions[questionIndex].text }}
-            </div>
-
-            <div class="quiz-head__image">
-              <img :src="quiz.questions[questionIndex].image" alt="cover" />
-            </div>
-          </div>
-
-          <div class="quiz-body">
-            <div
-              v-for="(response, index) in quiz.questions[questionIndex]
-                .responses"
-              :key="response.text"
-              class="quiz-body__response-text"
-              @click.once="next(response)"
-            >
-              <input type="radio" :name="response" :id="index + '-response'" />
-              <label
-                :for="index + '-response'"
-                :class="{ checked: response.checked }"
+            <div class="quiz-body">
+              <div
+                v-for="(response, index) in quiz.questions[questionIndex]
+                  .responses"
+                :key="response.text"
+                class="quiz-body__response-text"
+                @click.once="next(response)"
               >
-                {{ response.text }}
-              </label>
+                <input type="radio" :name="response" :id="index + '-response'" />
+                <label
+                  :for="index + '-response'"
+                  :class="{ checked: response.checked }"
+                >
+                  {{ response.text }}
+                </label>
+              </div>
+            </div>
+
+            <div class="quiz-footer">
+              <button @click="prev" class="quiz-footer__button">Previous</button>
+              <button @click="toggle" class="quiz-footer__button">
+                Restart
+              </button>
             </div>
           </div>
-
-          <div class="quiz-footer">
-            <button @click="prev" class="quiz-footer__button">Previous</button>
-            <button @click="toggle" class="quiz-footer__button">
-              Restart
-            </button>
-          </div>
-        </div>
+        </transition-group>
       </div>
     </section>
   </div>
@@ -69,13 +71,14 @@ export default {
       quiz: quiz,
       questionIndex: 0,
       correctAnswer: 0,
-      isShow: true,
+      show: false,
     };
   },
   methods: {
     toggle: function() {
       this.$refs.plug.classList.toggle('show')
       this.$refs.main.classList.toggle('show')
+      this.questionIndex = 0
     },
     next: function (e) {
       setTimeout(() => (this.questionIndex += 1), 500);
@@ -83,15 +86,12 @@ export default {
       if (e.correct) {
         this.correctAnswer += 1;
       }
+      this.show = !this.show
     },
     prev: function () {
       if (this.questionIndex > 0) {
         this.questionIndex -= 1;
       }
-    },
-
-    restart: function () {
-      console.log("restart");
     },
   },
 };
@@ -126,36 +126,37 @@ body {
   box-shadow: 0px 11px 20px #e8eef4;
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.4);
-  transition: all 1s;
+  transition: all 500ms;
   font-size: 18px;
   position: relative;
 
   &-main {
     opacity: 0;
     z-index: 0;
-    display: none;
+    transition: all 500ms;
+    position: relative;
 
     &.show {
       opacity: 1;
       z-index: 2;
-      display: block;
+      height: 100%;
     }
   }
 
   &-plug {
     opacity: 0;
     z-index: 0;
-    display: none;
+    left: 0;
+    top: 25%;
+    width: 100%;
+    transition: all 500ms;
+    position: absolute;
     
     &.show {
       opacity: 1;
       z-index: 2;
-      display: block;
     }
 
-    & .quiz-footer {
-      text-align: center;
-    }
   }
 
   &-head {
@@ -178,6 +179,7 @@ body {
       border-radius: 10px;
       background: rgba(102, 199, 255, 0.137);
       position: relative;
+      transition: all 500ms;
       &:hover {
         background: rgba(102, 199, 255, 0.337);
       }
@@ -203,9 +205,11 @@ body {
   }
 
   &-footer {
-    text-align: left;
+    display: flex;
+    justify-content: space-around;
     &__button {
-      background: none;
+      background-color: rgba(102, 199, 255, 0.1);
+      border-radius: 5px;
       color: inherit;
       border: none;
       padding: 10px;
@@ -220,4 +224,14 @@ body {
     }
   }
 }
+
+.fade-enter-active, .fade-leave-active {
+  transition: 500ms;
+}
+
+
+.fade-enter-from, .fade-leave-to {
+  transition: 500ms;
+}
+
 </style>

@@ -31,6 +31,7 @@ const quiz = {
         { text: "Policy" },
         { text: "Orange" },
         { text: "Tower", correct: true },
+        { text: "Onion" },
       ],
     },
 
