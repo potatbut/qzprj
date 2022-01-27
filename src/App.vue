@@ -2,42 +2,58 @@
   <div class="wrapper">
     <section class="quiz-section">
       <div id="quiz" class="quiz">
-        <div class="quiz-head">
-          <div class="quiz-head__question-number">
-            Question number
-            {{ questionIndex + 1 }}/
-            {{ quiz.questions.length }}
-          </div>
-
-          <div class="quiz-head__question-text">
-            {{ quiz.questions[questionIndex].text }}
-          </div>
-
-          <div class="quiz-head__image">
-            <img :src="quiz.questions[questionIndex].image" alt="cover" />
+        <div class="quiz-plug show" ref="plug">
+          <div class="quiz-head">
+            <div class="quiz-head__question-number">{{ quiz.plug.start }}</div>
+            <div class="quiz-head__image">
+              <img :src="quiz.plug.image.start" alt="cover" />
+            </div>
+            <div class="quiz-footer">
+              <button @click="toggle" class="quiz-footer__button">Start</button>
+            </div>
           </div>
         </div>
+        <div class="quiz-main" ref="main">
+          <div class="quiz-head">
+            <div class="quiz-head__question-number">
+              Question number
+              {{ questionIndex + 1 }}/
+              {{ quiz.questions.length }}
+            </div>
 
-        <div class="quiz-body">
-          <div
-            v-for="(response, index) in quiz.questions[questionIndex].responses"
-            :key="response.text"
-            class="quiz-body__response-text"
-            @click.once="next(response)"
-          >
-            <input type="radio" :name="response" :id="index + '-response'" />
-            <label
-              :for="index + '-response'"
-              :class="{ checked: response.checked }"
+            <div class="quiz-head__question-text">
+              {{ quiz.questions[questionIndex].text }}
+            </div>
+
+            <div class="quiz-head__image">
+              <img :src="quiz.questions[questionIndex].image" alt="cover" />
+            </div>
+          </div>
+
+          <div class="quiz-body">
+            <div
+              v-for="(response, index) in quiz.questions[questionIndex]
+                .responses"
+              :key="response.text"
+              class="quiz-body__response-text"
+              @click.once="next(response)"
             >
-              {{ response.text }}
-            </label>
+              <input type="radio" :name="response" :id="index + '-response'" />
+              <label
+                :for="index + '-response'"
+                :class="{ checked: response.checked }"
+              >
+                {{ response.text }}
+              </label>
+            </div>
           </div>
-        </div>
 
-        <div class="quiz-footer">
-          <button @click="prev" class="quiz-footer__button">Previous</button>
-          <button @click="restart" class="quiz-footer__button">Restart</button>
+          <div class="quiz-footer">
+            <button @click="prev" class="quiz-footer__button">Previous</button>
+            <button @click="toggle" class="quiz-footer__button">
+              Restart
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -53,13 +69,16 @@ export default {
       quiz: quiz,
       questionIndex: 0,
       correctAnswer: 0,
+      isShow: true,
     };
   },
   methods: {
+    toggle: function() {
+      this.$refs.plug.classList.toggle('show')
+      this.$refs.main.classList.toggle('show')
+    },
     next: function (e) {
-      console.log("click");
       setTimeout(() => (this.questionIndex += 1), 500);
-      /* this.questionIndex += 1 */
       this.checked = !this.checked;
       if (e.correct) {
         this.correctAnswer += 1;
@@ -97,6 +116,11 @@ body {
   text-align: center;
 }
 
+.show {
+  opacity: 1;
+  z-index: 2;
+}
+
 .quiz {
   padding: 15px;
   box-shadow: 0px 11px 20px #e8eef4;
@@ -104,6 +128,36 @@ body {
   background: rgba(255, 255, 255, 0.4);
   transition: all 1s;
   font-size: 18px;
+  position: relative;
+
+  &-main {
+    opacity: 0;
+    z-index: 0;
+    display: none;
+
+    &.show {
+      opacity: 1;
+      z-index: 2;
+      display: block;
+    }
+  }
+
+  &-plug {
+    opacity: 0;
+    z-index: 0;
+    display: none;
+    
+    &.show {
+      opacity: 1;
+      z-index: 2;
+      display: block;
+    }
+
+    & .quiz-footer {
+      text-align: center;
+    }
+  }
+
   &-head {
     &__question-number {
       font-size: 24px;
