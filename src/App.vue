@@ -31,17 +31,21 @@
               </div>
             </div>
 
-            <div class="quiz-body">
+            <div class="quiz-body" ref="questionNumber" :data-index=questionIndex>
               <div
                 v-for="(response, index) in quiz.questions[questionIndex]
                   .responses"
                 :key="response.text"
                 class="quiz-body__response-text"
-                @click.once="next(response)"
+                @click.once="next(response, $event)"
               >
-                <input type="radio" :name="response" :id="index + '-response'" />
+                <input 
+                  type="radio" 
+                  :id="'response' + index"
+                  :ref="'response' + index"
+                  />
                 <label
-                  :for="index + '-response'"
+                  :for="'response' + index"
                   :class="{ checked: response.checked }"
                 >
                   {{ response.text }}
@@ -49,7 +53,7 @@
               </div>
             </div>
 
-            <div class="quiz-footer">
+            <div class="quiz-footer" v-if="!questionIndex == 0">
               <button @click="prev" class="quiz-footer__button">Previous</button>
               <button @click="toggle" class="quiz-footer__button">
                 Restart
@@ -72,32 +76,50 @@ export default {
       questionIndex: 0,
       correctAnswer: 0,
       show: false,
+      selectedResponses: [],
+      questionNum: ''
     };
   },
   methods: {
     toggle: function() {
       this.$refs.plug.classList.toggle('show')
       this.$refs.main.classList.toggle('show')
-      this.questionIndex = 0
+      setTimeout(() => (this.questionIndex = 0), 500);
+      
     },
-    next: function (e) {
+
+    next: function (e, event) {
+      const response = event.target.getAttribute('for')
+
       setTimeout(() => (this.questionIndex += 1), 500);
       this.checked = !this.checked;
+      this.show = !this.show
+
       if (e.correct) {
         this.correctAnswer += 1;
       }
-      this.show = !this.show
+
+      this.selectedResponses.push(response)
+      console.log("ответы: " + this.selectedResponses)
+
     },
     prev: function () {
       if (this.questionIndex > 0) {
         this.questionIndex -= 1;
       }
+
+      
+      this.questionNumber = this.$refs.questionNumber.getAttribute('data-index') - 1
+      // console.log("номер вопроса:  " + this.questionNumber, this.selectedResponses[this.questionNumber])
+      
+      console.log(this.$refs.response1[0])
     },
   },
 };
 </script>
 <style lang="scss">
 @import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
+
 
 body {
   font-family: "Roboto", arial, sans-serif;
@@ -132,7 +154,7 @@ body {
 
   &-main {
     opacity: 0;
-    z-index: 0;
+    z-index: -10;
     transition: all 500ms;
     position: relative;
 
@@ -145,7 +167,7 @@ body {
 
   &-plug {
     opacity: 0;
-    z-index: 0;
+    z-index: -10;
     left: 0;
     top: 25%;
     width: 100%;
@@ -228,7 +250,6 @@ body {
 .fade-enter-active, .fade-leave-active {
   transition: 500ms;
 }
-
 
 .fade-enter-from, .fade-leave-to {
   transition: 500ms;
