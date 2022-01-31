@@ -2,17 +2,42 @@
   <div class="wrapper">
     <section class="quiz-section">
       <div id="quiz" class="quiz">
-        <div class="quiz-plug show" ref="plug">
-          <div class="quiz-head">
-            <div class="quiz-head__question-number">{{ quiz.plug.start }}</div>
-            <div class="quiz-head__image">
-              <img :src="quiz.plug.image.start" alt="cover" />
+        
+        <div class="quiz-plug show" ref="plugStart">
+          <transition name="mode" mode="out-in"> 
+            <div class="quiz-head " v-if="mode == 'start'">
+              <div class="quiz-head__question-number">
+                {{ quiz.plug.heading.start }}
+              </div>
+              <div class="quiz-head__image">
+                <img :src="quiz.plug.image.start" alt="cover" />
+              </div>
+              <div class="quiz-footer">
+                <button @click="toggle" class="quiz-footer__button">
+                  {{ quiz.plug.buttontext.start }}
+                </button>
+              </div>
             </div>
-            <div class="quiz-footer">
-              <button @click="toggle" class="quiz-footer__button">Start</button>
+
+            <div class="quiz-head " v-else-if="mode == 'end'">
+              <div class="quiz-head__question-number">
+                {{ quiz.plug.heading.end }}
+                <p>
+                  Total score: {{ correctAnswerSum }} / {{ quiz.questions.length }}
+                </p>
+              </div>
+              <div class="quiz-head__image">
+                <img :src="quiz.plug.image.end" alt="cover" />
+              </div>
+              <div class="quiz-footer">
+                <button @click="restart" class="quiz-footer__button">
+                  {{ quiz.plug.buttontext.end }}
+                </button>
+              </div>
             </div>
-          </div>
+          </transition>
         </div>
+
         <transition-group name="fade">
           <div class="quiz-main" ref="main" :v-if="show" :key="quiz">
             <div class="quiz-head">
@@ -20,6 +45,13 @@
                 Question number
                 {{ questionIndex + 1 }}/
                 {{ quiz.questions.length }}
+              </div>
+
+              <div class="quiz-head__progress">
+                <progress
+                  :value="((questionIndex + 1) / quiz.questions.length) * 100"
+                  max="100"
+                ></progress>
               </div>
 
               <div class="quiz-head__question-text">
@@ -31,30 +63,29 @@
               </div>
             </div>
 
-            <div class="quiz-body" ref="questionNumber" :data-index=questionIndex>
+            <div class="quiz-body" :data-index="questionIndex">
               <div
                 v-for="(response, index) in quiz.questions[questionIndex]
                   .responses"
                 :key="response.text"
                 class="quiz-body__response-text"
-                @click.once="next(response, $event)"
+                @click.once="next(response)"
               >
-                <input 
-                  type="radio" 
+                <input
+                  type="radio"
                   :id="'response' + index"
-                  :ref="'response' + index"
-                  />
-                <label
-                  :for="'response' + index"
-                  :class="{ checked: response.checked }"
-                >
+                  :checked="selectedResponses[questionIndex] == response"
+                />
+                <label :for="'response' + index">
                   {{ response.text }}
                 </label>
               </div>
             </div>
 
             <div class="quiz-footer" v-if="!questionIndex == 0">
-              <button @click="prev" class="quiz-footer__button">Previous</button>
+              <button @click="prev" class="quiz-footer__button">
+                Previous
+              </button>
               <button @click="toggle" class="quiz-footer__button">
                 Restart
               </button>
@@ -74,52 +105,59 @@ export default {
     return {
       quiz: quiz,
       questionIndex: 0,
-      correctAnswer: 0,
+      correctAnswerSum: 0,
       show: false,
-      selectedResponses: [],
-      questionNum: ''
+      selectedResponses: [""],
+      mode: "start",
     };
   },
   methods: {
-    toggle: function() {
-      this.$refs.plug.classList.toggle('show')
-      this.$refs.main.classList.toggle('show')
-      setTimeout(() => (this.questionIndex = 0), 500);
-      
+    toggleScreen: function () {
+      this.$refs.plugStart.classList.toggle("show");
+      this.$refs.main.classList.toggle("show");
     },
 
-    next: function (e, event) {
-      const response = event.target.getAttribute('for')
-
-      setTimeout(() => (this.questionIndex += 1), 500);
-      this.checked = !this.checked;
-      this.show = !this.show
-
-      if (e.correct) {
-        this.correctAnswer += 1;
+    correctResponse: function (response) {
+      if (response.correct) {
+        this.correctAnswerSum += 1;
       }
+    },
 
-      this.selectedResponses.push(response)
-      console.log("ответы: " + this.selectedResponses)
+    toggle: function () {
+      this.toggleScreen();
+      this.selectedResponses = [];
+      this.questionIndex = 0;
+      setTimeout(() => ((this.correctAnswerSum = 0), (this.mode = "start")), 500);
+    },
 
+    restart: function( ) {
+      this.selectedResponses = [];
+      this.questionIndex = 0;
+      this.mode = "start"
+      setTimeout(() => ((this.correctAnswerSum = 0)), 500);
+    },
+
+    next: function (response) {
+      if (this.questionIndex + 1 < quiz.questions.length) {
+        setTimeout(() => (this.questionIndex += 1), 500);
+        this.selectedResponses[this.questionIndex] = response;
+        this.correctResponse(response)
+      } else if (this.questionIndex + 1 == quiz.questions.length) {
+        setTimeout(() => this.toggleScreen(), 500);
+        this.mode = "end";
+        this.correctResponse(response)
+      }
     },
     prev: function () {
       if (this.questionIndex > 0) {
         this.questionIndex -= 1;
       }
-
-      
-      this.questionNumber = this.$refs.questionNumber.getAttribute('data-index') - 1
-      // console.log("номер вопроса:  " + this.questionNumber, this.selectedResponses[this.questionNumber])
-      
-      console.log(this.$refs.response1[0])
     },
   },
 };
 </script>
 <style lang="scss">
 @import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
-
 
 body {
   font-family: "Roboto", arial, sans-serif;
@@ -173,15 +211,15 @@ body {
     width: 100%;
     transition: all 500ms;
     position: absolute;
-    
+
     &.show {
       opacity: 1;
       z-index: 2;
     }
-
   }
 
   &-head {
+    padding: 0 10px;
     &__question-number {
       font-size: 24px;
     }
@@ -247,12 +285,13 @@ body {
   }
 }
 
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: 500ms;
 }
 
-.fade-enter-from, .fade-leave-to {
+.fade-enter-from,
+.fade-leave-to {
   transition: 500ms;
 }
-
 </style>

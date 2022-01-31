@@ -39,11 +39,17 @@ const quiz = {
   ],
 
   plug: {
-    start: "Hello yes u can start",
-    end: "Bye u cool :^) Or start again",
+    heading: {
+      start: "Hello yes u can start",
+      end: "Bye u cool :^) Or start again",
+    },
     image: { 
       start: "./img/test.svg",
       end: "./img/end.svg"
+    },
+    buttontext: {
+      start: "Start",
+      end: "Restart",
     },
     
   }
