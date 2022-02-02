@@ -1,45 +1,68 @@
 const quiz = {
   questions: [
-
     {
       image: "./img/1.jpg",
-      text: "Which animals live in the market?",
+      text: "Возможность выбрать только один ответ",
       responses: [
         { text: "Wolves and hares" },
         { text: "Bulls and bears" },
-        { text: "Cats and mice", correct: true },
+        { text: "Cats and mice", correct: true, comment: 'Текст почему это правильный ответ' },
         { text: "Sheep and wolves" },
       ],
     },
 
     {
+      manyAnswers: true,
       image: "./img/2.jpeg",
-      text: "This feature illustrates one or more geographical regions and can be found at the back of most history textbooks.",
+      text: "Возможность выбрать несколько ответов",
       responses: [
-        { text: "Glossary " },
-        { text: "Atlas", correct: true },
-        { text: "Index" },
+        { text: "Glossary", correct: true, comment: 'Текст почему это правильный ответ' },
+        { text: "Atlas", correct: true, comment: 'Текст почему это правильный ответ' },
+        { text: "Index", correct: true, comment: 'Текст почему это правильный ответ' },
         { text: "Captions" },
       ],
     },
 
     {
       image: "./img/3.png",
-      text: "Which one of the following is not an Expository Text?",
+      text: "Изображения вместо текстовых ответов",
       responses: [
-        { text: "History Alive! Textbook" },
-        { text: "Harry Potter", correct: true },
-        { text: "Encyclopedia" },
-        { text: "Biography" },
+        { img: "./img/1.jpg", text: "History Alive! Textbook" },
+        { img: "./img/2.jpeg", text: "Harry Potter", correct: true, comment: 'Текст почему это правильный ответ' },
+        { img: "./img/3.png", text: "Encyclopedia" },
+        { img: "./img/start.png", text: "Biography" },
       ],
     },
 
+    {
+      manyAnswers: true,
+      image: "./img/2.jpeg",
+      text: "Возможность выбрать несколько ответов снова и они не повляют на предыдущие несколько ответов",
+      responses: [
+        { text: "Какой-то ответ", correct: true, comment: 'Текст почему это правильный ответ' },
+        { text: "Еще один", correct: true, comment: 'Текст почему это правильный ответ' },
+        { text: "Снова ответ", correct: true, comment: 'Текст почему это правильный ответ' },
+        { text: "Это тоже ответ" },
+      ],
+    },
+
+    {
+      manyAnswers: true,
+      image: "./img/3.png",
+      text: "Возможность выбрать нресколько ответов-изображений",
+      responses: [
+        { img: "./img/1.jpg", text: "History Alive! Textbook" },
+        { img: "./img/2.jpeg", text: "Harry Potter", correct: true, comment: 'Текст почему это правильный ответ' },
+        { img: "./img/3.png", text: "Encyclopedia" },
+        { img: "./img/start.png", text: "Biography" },
+      ],
+    },
 
   ],
 
   plug: {
     heading: {
-      start: "How good you are at somthing?",
+      start: "Встречающий текст",
     },
     image: { 
       start: "./img/start.png",
@@ -50,13 +73,22 @@ const quiz = {
       end: "Restart",
     },
     totalText: {
-      raw : 'You have just started your way to know somthiung. You yet have a lot to learn to become a pro.',
-      middle: 'Almost here',
-      top: 'Good'
+      raw : 'Это слова, если правильных ответов 1/3',
+      middle: 'Это слова, если правильных ответов 2/3',
+      top: 'Это слова, если ответов больше, чем 2/3'
     }
-    
+  },
+
+  extraInfo: {
+      answersAtOnse: false,
+      answersAtEnd: true,
+  },
+  extraText: {
+      button: "Ok",
+      right: "Ответ правильный",
+      wrong: "Ответ неверный"
   }
-    
+  
   
 };
 
