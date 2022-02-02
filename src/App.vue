@@ -28,7 +28,11 @@
                 </div>
 
                 <div class="quiz-footer">
-                  <button @click="start" class="quiz-footer__button">
+                  <button
+                    @click="start"
+                    ref="startButton"
+                    class="quiz-footer__button"
+                  >
                     {{ quiz.plug.buttontext.start }}
                   </button>
                 </div>
@@ -36,7 +40,7 @@
 
               <div class="quiz-head" v-else>
                 <div class="quiz-head__question-number">
-                  {{ quiz.plug.totalText.end }}
+                  {{ totalText }}
                   <p>YOU SCORED A {{ correctAnswerSum }}</p>
                 </div>
                 <div class="quiz-head__image">
@@ -129,6 +133,8 @@ export default {
       show: false,
       selectedResponses: [""],
       mode: "start",
+      questionLength: quiz.questions.length,
+      totalText: "",
     };
   },
   methods: {
@@ -138,45 +144,53 @@ export default {
       }
     },
 
-    totalScoreText: function() {
-      const responseLevel = Math.floor(this.quiz.questions.length / 3)
-      if(this.correctAnswerSum <= responseLevel) {
-          console.log('мало')
-        } else if (this.correctAnswerSum <= responseLevel*2) {
-          console.log('средне')
-        } else if (this.correctAnswerSum > responseLevel*2) {
-          console.log('гуд')
-        }
+    resetQuiz: function () {
+      this.selectedResponses = [];
+      this.questionIndex = 0;
+      this.mode = "start";
+      this.correctAnswerSum = 0;
+    },
+
+    toggleShow: function () {
+      this.show = !this.show;
+    },
+
+    totalScoreText: function () {
+      const responseLevel = Math.floor(this.questionLength / 3);
+      if (this.correctAnswerSum <= responseLevel) {
+        this.totalText = quiz.plug.totalText.raw;
+        console.log("мало");
+      } else if (this.correctAnswerSum <= responseLevel * 2) {
+        this.totalText = quiz.plug.totalText.middle;
+        console.log("средне");
+      } else if (this.correctAnswerSum > responseLevel * 2) {
+        this.totalText = quiz.plug.totalText.top;
+        console.log("гуд");
+      }
     },
 
     start: function () {
+      this.resetQuiz();
       this.startProgress += 1;
-      this.show = !this.show;
-      this.selectedResponses = [];
-      this.questionIndex = 0;
-      this.correctAnswerSum = 0;
-      this.mode = "start";
+      this.toggleShow();
+      this.$refs.startButton.setAttribute("disabled", "");
     },
 
     restart: function () {
+      this.resetQuiz();
       this.startProgress = 0;
-      this.selectedResponses = [];
-      this.questionIndex = 0;
-      this.mode = "start";
-      this.correctAnswerSum = 0;
     },
 
     next: function (response) {
-      if (this.questionIndex + 1 < quiz.questions.length) {
+      if (this.questionIndex + 1 < this.questionLength) {
         setTimeout(() => (this.questionIndex += 1), 500);
         this.selectedResponses[this.questionIndex] = response;
         this.correctResponse(response);
-      } else if (this.questionIndex + 1 == quiz.questions.length) {
-        this.show = !this.show;
-        this.mode = "end";
+      } else if (this.questionIndex + 1 == this.questionLength) {
+        this.toggleShow();
         this.correctResponse(response);
-
-        this.totalScoreText()
+        this.totalScoreText();
+        this.mode = "end";
       }
     },
     prev: function () {
@@ -213,7 +227,7 @@ body {
   top: 0;
   left: 0;
   height: 2px;
-  transition: all 500ms;
+  transition: all 300ms;
 }
 
 .show {
@@ -226,14 +240,14 @@ body {
   box-shadow: 0px 11px 20px #e8eef4;
   border-radius: 0 0 10px 10px;
   background: rgba(255, 255, 255, 0.4);
-  transition: all 500ms;
+  transition: all 300ms;
   font-size: 18px;
   position: relative;
   max-width: 600px;
   width: 100%;
 
   &-main {
-    transition: all 500ms;
+    transition: all 300ms;
     position: relative;
     opacity: 1;
     z-index: 2;
@@ -252,7 +266,7 @@ body {
     left: 0;
     top: 25%;
     width: 100%;
-    transition: all 500ms;
+    transition: all 300ms;
     opacity: 1;
     z-index: 2;
     position: relative;
@@ -290,7 +304,7 @@ body {
       height: 20px;
       border-radius: 5px;
       border: 1px solid rgba(102, 199, 255, 0.6);
-      transition: all 500ms;
+      transition: all 300ms;
     }
     &__response-text {
       cursor: pointer;
@@ -298,7 +312,7 @@ body {
       border-radius: 10px;
       background: rgba(102, 199, 255, 0.137);
       position: relative;
-      transition: all 500ms;
+      transition: all 300ms;
       text-align: left;
       &:hover {
         background: rgba(102, 199, 255, 0.337);
@@ -366,7 +380,7 @@ body {
 
 .fade-enter-active,
 .fade-leave-active {
-  transition: 500ms;
+  transition: 300ms;
 }
 
 .fade-enter-from,
