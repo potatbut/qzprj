@@ -1,13 +1,5 @@
 <template>
-<div class="links">
-      <router-link to="quizwa">С ответами после каждого вопроса</router-link>
-      <br>
-      <router-link to="quizwend">С правильными ответами в конце</router-link>
-    </div>
   <div class="wrapper">
-    
-    
-
     <section class="quiz-section">
       <div id="quiz" class="quiz">
         <div
@@ -26,18 +18,22 @@
               :key="question.text"
               class="quiz-body__response-text"
             >
-              <p>{{index+1}}. {{ question.text }}</p>
+              <p>{{ index + 1 }}. {{ question.text }}</p>
               Правильный ответ:
               <div
                 v-for="respones in question.responses"
                 :key="respones.correct"
                 class="quiz-body__response-text-answer"
               >
-                <p v-if="respones.correct">  {{ respones.text }}</p>
+                <div v-if="respones.correct">{{ respones.text }}
+                  <div v-if="respones.img"
+                class="quiz-body__response-img"
+                :style="{ 'background-image': 'url(' + respones.img + ')' }"></div></div>
+                
               </div>
             </div>
-            
-          <button @click="end=!end" class="quiz-footer__button">Ok</button>
+
+            <button @click="end = !end" class="quiz-footer__button">Ok</button>
           </div>
         </div>
         <div class="popup" v-if="quiz.extraInfo.answersAtOnse">
@@ -103,7 +99,11 @@
                   <button @click="restart" class="quiz-footer__button">
                     {{ quiz.plug.buttontext.end }}
                   </button>
-                  <button @click="end=!end" v-if="quiz.extraInfo.answersAtEnd" class="quiz-footer__button">
+                  <button
+                    @click="end = !end"
+                    v-if="quiz.extraInfo.answersAtEnd"
+                    class="quiz-footer__button"
+                  >
                     Answers
                   </button>
                 </div>
@@ -120,6 +120,7 @@
               </div>
               <transition name="fade">
                 <div
+                  v-if="quiz.questions[questionIndex].image"
                   class="quiz-head__image"
                   :key="quiz.questions[questionIndex].image"
                 >
@@ -135,6 +136,7 @@
 
             <div
               class="quiz-body"
+              :class="{ noimage: !quiz.questions[questionIndex].image }"
               :data-index="questionIndex"
               v-if="!quiz.questions[questionIndex].manyAnswers"
             >
@@ -143,6 +145,7 @@
                   .responses"
                 :key="response.text"
                 class="quiz-body__response-text"
+                :style="{ 'background-image': 'url(' + response.img + ')' }"
               >
                 <input
                   @click="select(response)"
@@ -156,18 +159,13 @@
                 <label :for="'response' + index">
                   <span class="quiz-body__response-checkbox"> </span>
                   <span v-if="!response.img">{{ response.text }}</span>
-                  <img
-                    v-if="response.img"
-                    :src="response.img"
-                    :alt="response.text"
-                    class="quiz-body__response-img"
-                  />
                 </label>
               </div>
             </div>
 
             <div
               class="quiz-body"
+              :class="{ noimage: !quiz.questions[questionIndex].image }"
               :data-index="questionIndex"
               v-else-if="quiz.questions[questionIndex].manyAnswers"
             >
@@ -176,35 +174,29 @@
                   .responses"
                 :key="response.text"
                 class="quiz-body__response-text"
+                :style="{ 'background-image': 'url(' + response.img + ')' }"
               >
                 <input
-                  @click="select(response)"
+                  v-model="manySelected"
                   type="checkbox"
-                  :value="response"
+                  :value="{ [questionIndex]: response }"
                   :name="'response' + index"
                   :id="'response' + index"
-                  v-model="manySelected"
+                  @click="select(response)"
                 />
                 <label :for="'response' + index">
                   <span class="quiz-body__response-checkbox"> </span>
                   <span v-if="!response.img">{{ response.text }}</span>
-                  <img
-                    v-if="response.img"
-                    :src="response.img"
-                    :alt="response.text"
-                    class="quiz-body__response-img"
-                  />
+                  <div
+                    :style="{
+                      'background-image': 'url(' + response.img + ')',
+                    }"
+                  ></div>
                 </label>
               </div>
             </div>
 
             <div class="quiz-footer">
-              <!-- <br />
-              из радио: {{ selectedResponses }}
-              <br />
-              из чекбоксов: {{ manySelected }}
-              <br /> -->
-
               <button
                 v-if="!questionIndex == 0"
                 @click="prev"
@@ -216,13 +208,19 @@
                 {{ questionIndex + 1 }} /
                 {{ quiz.questions.length }}
               </div>
-              <button @click="next" class="quiz-footer__button">Next</button>
+              <button
+                @click="next([questionIndex])"
+                class="quiz-footer__button"
+              >
+                Next
+              </button>
             </div>
           </div>
         </transition>
       </div>
     </section>
   </div>
+
 </template>
 
 <script>
@@ -234,7 +232,8 @@ export default {
       correctAnswerSum: 0,
       startProgress: 0,
       show: false,
-      manySelected: [],
+      manySelected: {},
+      manySelectedSort: [],
       selectedResponses: [],
       mode: "start",
       questionLength: quiz.questions.length,
@@ -242,7 +241,7 @@ export default {
       popup: false,
       correct: "",
       correctText: "",
-      end: false
+      end: false,
     };
   },
   methods: {
@@ -251,15 +250,18 @@ export default {
         return el != null;
       });
 
-      const totalArray = filtered.concat(secondarray);
+      const filteredMany = this.manySelectedSort.filter(function (el) {
+        return el != undefined;
+      });
 
-      for (let i = 0; i < totalArray.length; i++) {
-        if (totalArray[i].correct) {
+      for (let i = 0; i < filtered.length; i++) {
+        if (filtered[i].correct) {
           this.correctAnswerSum++;
         }
       }
-    },
 
+      this.correctAnswerSum += filteredMany.length;
+    },
     resetQuiz: function () {
       this.selectedResponses = [];
       this.manySelected = [];
@@ -274,10 +276,13 @@ export default {
 
     totalScoreText: function () {
       /* Количество уровней правильных ответов взятое из головы */
-      const responseLevel = Math.floor(9 / 3);
+      const responseLevel = Math.floor(this.questionLength / 3);
       if (this.correctAnswerSum <= responseLevel) {
         this.totalText = quiz.plug.totalText.raw;
-      } else if (responseLevel < this.correctAnswerSum && this.correctAnswerSum <= responseLevel * 2) {
+      } else if (
+        responseLevel < this.correctAnswerSum &&
+        this.correctAnswerSum <= responseLevel * 2
+      ) {
         this.totalText = quiz.plug.totalText.middle;
       } else if (this.correctAnswerSum > responseLevel * 2) {
         this.totalText = quiz.plug.totalText.top;
@@ -312,15 +317,42 @@ export default {
       this.startProgress = 0;
     },
 
-    next: function () {
+    manyAnswerFunction: function (questionIndex) {
+      if (quiz.questions[questionIndex].manyAnswers) {
+        let sumSelected = [];
+        let sumCorrect = 0;
+        for (let i = 0; i < this.manySelected.length; i++) {
+          if (this.manySelected[i][questionIndex]) {
+            sumSelected.push(this.manySelected[i][questionIndex]);
+          }
+        }
+        for (let i = 0; i < sumSelected.length; i++) {
+          if (sumSelected[i].correct) {
+            sumCorrect += 1;
+          }
+        }
+        const selectedarr = sumSelected.length;
+        const quizAnswer = quiz.questions[questionIndex].correctAnswers;
+        if (selectedarr == quizAnswer || sumCorrect == quizAnswer) {
+          this.manySelectedSort[questionIndex] = 1;
+        } else {
+          this.manySelectedSort.splice([questionIndex], 1);
+        }
+      }
+    },
+
+    next: function (questionIndex) {
       if (this.questionIndex + 1 < this.questionLength) {
         this.popup = !this.popup;
         this.questionIndex += 1;
+
+        this.manyAnswerFunction(questionIndex);
       } else if (this.questionIndex + 1 == this.questionLength) {
         this.popup = !this.popup;
+        this.manyAnswerFunction(questionIndex);
 
         this.toggleShow();
-        this.correctResponse(this.selectedResponses, this.manySelected);
+        this.correctResponse(this.selectedResponses, this.manySelectedSort);
         this.mode = "end";
         this.totalScoreText();
       }
@@ -335,10 +367,6 @@ export default {
     },
   },
 };
-
-
-
-
 </script>
 <style lang="scss">
 @import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
@@ -398,12 +426,17 @@ body {
         margin: 10px 0;
       }
     }
-    
-    & .quiz-body__response-text-answer{
+
+    & .quiz-body__response-text-answer {
       background: rgba(207, 255, 221, 0.699);
       & p {
         margin: 10px 0;
         text-align: center;
+      }
+      & .quiz-body__response-img {
+        width: 100px;
+        height: 100px;
+        background-size: cover;
       }
     }
   }
@@ -420,6 +453,14 @@ body {
     }
     & .quiz-body {
       padding-top: 220px;
+      &.noimage {
+        z-index: 3;
+        padding-top: 20px;
+        display: grid;
+        grid-column-gap: 10px;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, 150px);
+      }
     }
   }
 
@@ -452,6 +493,7 @@ body {
         background-size: cover;
         width: 100%;
         height: 200px;
+        z-index: 3;
       }
     }
     &.answers {
@@ -504,17 +546,25 @@ body {
       position: relative;
       transition: all 400ms;
       text-align: left;
+      background-size: cover;
       &:hover {
-        background: rgba(102, 199, 255, 0.337);
+        background-color: rgba(102, 199, 255, 0.337);
       }
       label {
         cursor: pointer;
         display: block;
-        padding: 10px;
         margin: 0;
         max-height: 50px;
         overflow: hidden;
         padding-left: 40px;
+        height: 100%;
+        max-height: 100%;
+        line-height: 2.5;
+        &:hover {
+          background-color: rgba(102, 199, 255, 0.337);
+          border-radius: 10px;
+          opacity: 0.8;
+        }
       }
       input[type="radio"],
       input[type="checkbox"] {
@@ -529,6 +579,7 @@ body {
       input[type="checkbox"]:checked ~ label {
         border-radius: 10px;
         background: rgba(199, 102, 255, 0.137);
+        height: 100%;
       }
       input[type="radio"]:checked ~ label .quiz-body__response-checkbox,
       input[type="checkbox"]:checked ~ label .quiz-body__response-checkbox {
