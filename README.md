@@ -16,7 +16,9 @@ questions: [
 
     /* Массив ответов */
     responses: [ 
-      /* Правильные ответы: correct - указывает на то, что ответ верный, comment - комментарий или объяснение*/
+      /* Правильные ответы: 
+        correct - указывает на то, что ответ верный, comment - комментарий или объяснение
+      */
       { text: "Glossary", correct: true, comment: 'Текст почему это правильный ответ' },
       { text: "Atlas", correct: true, comment: 'Текст почему это правильный ответ' },
 
@@ -35,7 +37,11 @@ questions: [
     responses: [
       /* Для изображений на месте текста, указывается параметр img со ссылкой на изображение */
       { img: "./img/1.jpg", text: "History Alive! Textbook" },
-      { img: "./img/2.jpeg", text: "Harry Potter", correct: true, comment: 'Текст почему это правильный ответ' },
+      { 
+        img: "./img/2.jpeg", text: "Harry Potter", 
+        correct: true, 
+        comment: 'Текст почему это правильный ответ' 
+      },
       { img: "./img/3.png", text: "Encyclopedia"},
       { img: "./img/start.png", text: "Biography" },
     ],
@@ -66,7 +72,7 @@ totalText: {
 /* Доп. функции */
 extraInfo: {
     answersAtOnse: false, /* Если указано true, корректность ответа будет показана сразу */
-    answersAtEnd: true, /* Если указано true, в конце будет возможность увидеть список правильных ответов */
+    answersAtEnd: true, /* Если указано true, в конце будет список правильных ответов */
 },
 extraText: {
     button: "Ok",  /* Текст для кнопки в ответах, скрывает ответы */
