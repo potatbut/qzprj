@@ -73,7 +73,7 @@ const quiz = {
       end: "Restart",
     },
     totalText: {
-      raw : 'Это слова, если правильных ответов 1/3',
+      raw : 'Какая-то система подсчета',
       middle: 'Это слова, если правильных ответов 2/3',
       top: 'Это слова, если ответов больше, чем 2/3'
     }
@@ -81,7 +81,7 @@ const quiz = {
 
   extraInfo: {
       answersAtOnse: false,
-      answersAtEnd: true,
+      answersAtEnd: false,
   },
   extraText: {
       button: "Ok",
