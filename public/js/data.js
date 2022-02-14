@@ -6,9 +6,10 @@ const quiz = {
       responses: [
         { text: "Wolves and hares" },
         { text: "Bulls and bears" },
-        { text: "Cats and mice (Правильный)", correct: true, comment: 'Текст почему это правильный ответ' },
+        { text: "Cats and mice (Правильный)", correct: true, },
         { text: "Sheep and wolves" },
       ],
+      comment: 'Объяснение к парвильному ответу 1' 
     },
 
     {
@@ -17,21 +18,23 @@ const quiz = {
       image: "./img/2.jpeg",
       text: "Возможность выбрать несколько ответов",
       responses: [
-        { text: "Glossary (Правильный)", correct: true, comment: 'Текст почему это правильный ответ' },
-        { text: "Atlas (Правильный)", correct: true, comment: 'Текст почему это правильный ответ' },
-        { text: "Index (Правильный)", correct: true, comment: 'Текст почему это правильный ответ' },
+        { text: "Glossary (Правильный)", correct: true },
+        { text: "Atlas (Правильный)", correct: true },
+        { text: "Index (Правильный)", correct: true },
         { text: "Captions" },
       ],
+      comment: 'Объяснение к парвильному ответу 2' 
     },
 
     {
       text: "Изображения вместо текстовых ответов. 2-ой правильный",
       responses: [
         { img: "./img/1.jpg", text: "History Alive! Textbook" },
-        { img: "./img/2.jpeg", text: "Harry Potter (Правильный)", correct: true, comment: 'Текст почему это правильный ответ' },
+        { img: "./img/2.jpeg", text: "Harry Potter (Правильный)", correct: true },
         { img: "./img/3.png", text: "Encyclopedia" },
         { img: "./img/start.png", text: "Biography" },
       ],
+      comment: 'Объяснение к парвильному ответу 3' 
     },
 
     {
@@ -40,11 +43,13 @@ const quiz = {
       image: "./img/2.jpeg",
       text: "Возможность выбрать несколько ответов снова и они не повляют на предыдущие несколько ответов",
       responses: [
-        { text: "Какой-то ответ (Правильный)", correct: true, comment: 'Текст почему это правильный ответ' },
-        { text: "Еще один (Правильный)", correct: true, comment: 'Текст почему это правильный ответ' },
+        { text: "Какой-то ответ (Правильный)", correct: true},
+        { text: "Еще один (Правильный)", correct: true },
         { text: "Снова ответ"},
         { text: "Это тоже ответ" },
       ],
+      comment: 'Объяснение к парвильному ответу 4' 
+      
     },
 
     {
@@ -53,10 +58,11 @@ const quiz = {
       text: "Возможность выбрать несколько ответов-изображений. 2-ой и 3ий правильные",
       responses: [
         { img: "./img/1.jpg", text: "History Alive! Textbook" },
-        { img: "./img/2.jpeg", text: "Harry Potter (Правильный)", correct: true, comment: 'Текст почему это правильный ответ' },
-        { img: "./img/3.png", text: "Encyclopedia", correct: true, comment: 'Текст почему это правильный ответ' },
+        { img: "./img/2.jpeg", text: "Harry Potter (Правильный)", correct: true},
+        { img: "./img/3.png", text: "Encyclopedia  (Правильный)", correct: true},
         { img: "./img/start.png", text: "Biography" },
       ],
+      comment: 'Объяснение к парвильному ответу 5' 
     },
 
   ],
@@ -64,13 +70,14 @@ const quiz = {
   plug: {
     heading: {
       start: "Встречающий текст",
+      startSubText: "Встречающий подтекст"
     },
     image: { 
       start: "./img/start.png",
       end: "./img/end.jpg"
     },
     buttontext: {
-      start: "Start",
+      start: "Начать",
       end: "Restart",
     },
     totalText: {
@@ -79,18 +86,14 @@ const quiz = {
       top: 'Это слова, если ответов больше, чем 2/3'
     }
   },
-
   extraInfo: {
-      answersAtOnse: false,
       answersAtEnd: true,
   },
   extraText: {
-      button: "Ok",
-      right: "Ответ правильный",
+      button: "Далее",
+      correct: "Ответ правильный",
       wrong: "Ответ неверный"
   }
-  
-  
 };
 
 window.quiz = quiz
