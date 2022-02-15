@@ -78,7 +78,7 @@ const quiz = {
     },
     buttontext: {
       start: "Начать",
-      end: "Restart",
+      end: "Рестарт",
     },
     totalText: {
       raw : 'Это слова, если правильных ответов 1/3',

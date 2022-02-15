@@ -52,7 +52,7 @@
               </div>
 
               <button @click="end = !end" class="quiz-footer__button">
-                Ok
+                Закрыть
               </button>
             </div>
           </div>
@@ -78,7 +78,7 @@
                   <button
                     @click="start"
                     ref="startButton"
-                    class="quiz-footer__button"
+                    class="quiz-footer__button startButton"
                   >
                     {{ quiz.plug.buttontext.start }}
                   </button>
@@ -98,15 +98,18 @@
                   ></div>
                 </div>
                 <div class="quiz-footer">
-                  <button @click="restart" class="quiz-footer__button">
+                  <button
+                    @click="restart"
+                    class="quiz-footer__button restartButton"
+                  >
                     {{ quiz.plug.buttontext.end }}
                   </button>
                   <button
                     @click="end = !end"
                     v-if="quiz.extraInfo.answersAtEnd"
-                    class="quiz-footer__button"
+                    class="quiz-footer__button answersButton"
                   >
-                    Answers
+                    Список ответов
                   </button>
                 </div>
               </div>
@@ -136,65 +139,68 @@
               </transition>
             </div>
 
-              <div class="popup">
-                <transition name="popup" mode="out-in">
-                  <div
-                    :class="'quiz-head answers answers-' + correct"
-                    v-if="popup"
-                  >
-                    <div class="quiz-head__question-number">
-                      <p>{{ quiz.extraText[correct] }}</p>
-                      <p>{{ quiz.questions[questionIndex].comment }}</p>
-                    </div>
-                    <div class="quiz-footer">
-                      <button @click="confirm" class="quiz-footer__button">
-                        {{ quiz.extraText.button }}
-                      </button>
-                    </div>
+            <div class="popup">
+              <transition name="popup" mode="out-in">
+                <div
+                  :class="'quiz-head answers answers-' + correct"
+                  v-if="popup"
+                >
+                  <div class="quiz-head__question-number">
+                    <p>{{ quiz.extraText[correct] }}</p>
+                    <p>{{ quiz.questions[questionIndex].comment }}</p>
                   </div>
-                </transition>
-              </div>
+                  <div class="quiz-footer">
+                    <button
+                      @click="confirm"
+                      class="quiz-footer__button"
+                      :class="getEndButton(questionIndex) "
+                    >
+                      {{ quiz.extraText.button }}
+                    </button>
+                  </div>
+                </div>
+              </transition>
+            </div>
             <div
               class="quiz-body"
               :class="{ noimage: !quiz.questions[questionIndex].image }"
             >
-             
-                <div
-                  v-for="(response, index) in quiz.questions[questionIndex]
-                    .responses"
-                  :key="response.text"
-                  class="quiz-body__response-text"
-                  :style="{ 'background-image': 'url(' + response.img + ')' }"
-                >
-                  <input
-                    :type="
-                      quiz.questions[questionIndex].manyAnswers
-                        ? 'checkbox'
-                        : 'radio'
-                    "
-                    :value="response"
-                    :id="'response' + index"
-                    v-model="selectedResponses"
-                  />
-                  <label :for="'response' + index">
-                    <span class="quiz-body__response-checkbox"> </span>
-                    <span v-if="!response.img">{{ response.text }}</span>
-                    <div
-                      :style="{
-                        'background-image': 'url(' + response.img + ')',
-                      }"
-                    ></div>
-                  </label>
-                </div>
-              
+              <div
+                v-for="(response, index) in quiz.questions[questionIndex]
+                  .responses"
+                :key="response.text"
+                class="quiz-body__response-text"
+                :style="{ 'background-image': 'url(' + response.img + ')' }"
+              >
+                <input
+                  :type="
+                    quiz.questions[questionIndex].manyAnswers
+                      ? 'checkbox'
+                      : 'radio'
+                  "
+                  :value="response"
+                  :id="'response' + index"
+                  v-model="selectedResponses"
+                />
+                <label :for="'response' + index">
+                  <span class="quiz-body__response-checkbox"> </span>
+                  <span v-if="!response.img">{{ response.text }}</span>
+                  <div
+                    :style="{
+                      'background-image': 'url(' + response.img + ')',
+                    }"
+                  ></div>
+                </label>
+              </div>
             </div>
 
             <div class="quiz-footer">
               <button
                 @click="next([questionIndex])"
                 class="quiz-footer__button"
+                :class="'nextButton' + [questionIndex + 1]"
               >
-                Далее
+                {{ quiz.extraText.button }}
               </button>
             </div>
           </div>
@@ -224,6 +230,10 @@ export default {
     };
   },
   methods: {
+    getEndButton: function(questionIndex) {
+        const endButton = [questionIndex+1] == quiz.questions.length ? 'endButton nextButton' + [questionIndex + 1] : 'nextButton' + [questionIndex + 1]
+        return endButton
+    },
     resetQuiz: function () {
       this.selectedResponses = [];
       this.questionIndex = 0;
