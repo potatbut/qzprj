@@ -51,7 +51,7 @@
                 </div>
               </div>
 
-              <button @click="end = !end" class="quiz-footer__button">
+              <button @click="end = !end" class="quiz-footer__button closeAnswersButton">
                 Закрыть
               </button>
             </div>
