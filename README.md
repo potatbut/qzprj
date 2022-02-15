@@ -2,14 +2,14 @@
 
 ## Настройки квиза:
 
-#### Файл настроек: @/js/data.js
+#### Файл настроек: @/data/data.js
 -----
 ``` javascript
 /* questions - массив вопросов */
 questions: [
   {
     manyAnswers: true, /* Строка добавляется, если в вопросе несколько ответов */
-    correctAnswers: 3, /* Количество правильных ответов, если в вопросе несколько ответов */
+    correctAnswers: 2, /* Количество правильных ответов, если в вопросе несколько ответов */
     
     image: "./img/2.jpeg", /* Изображение для вопроса*/
     text: "Возможность выбрать несколько ответов", /* Вопрос */
@@ -19,13 +19,14 @@ questions: [
       /* Правильные ответы: 
         correct - указывает на то, что ответ верный, comment - комментарий или объяснение
       */
-      { text: "Glossary", correct: true, comment: 'Текст почему это правильный ответ' },
-      { text: "Atlas", correct: true, comment: 'Текст почему это правильный ответ' },
+      { text: "Glossary", correct: true },
+      { text: "Atlas", correct: true },
 
       /* Неправильные ответы: */
       { text: "Index" },
       { text: "Captions" },
     ],
+    comment: 'Объяснение к парвильному ответу 1' /* Комментарий к ответу */
   },
 
   /* Вопрос с изображениями на месте текстовых ответов */
@@ -37,14 +38,11 @@ questions: [
     responses: [
       /* Для изображений на месте текста, указывается параметр img со ссылкой на изображение */
       { img: "./img/1.jpg", text: "History Alive! Textbook" },
-      { 
-        img: "./img/2.jpeg", text: "Harry Potter", 
-        correct: true, 
-        comment: 'Текст почему это правильный ответ' 
-      },
-      { img: "./img/3.png", text: "Encyclopedia"},
+      { img: "./img/2.jpeg", text: "Harry Potter", correct: true },
+      { img: "./img/3.png", text: "Encyclopedia" },
       { img: "./img/start.png", text: "Biography" },
     ],
+    comment: 'Объяснение к парвильному ответу 2' /* Комментарий к ответу */
   },
 ],
 
@@ -71,7 +69,6 @@ totalText: {
 
 /* Доп. функции */
 extraInfo: {
-    answersAtOnse: false, /* Если указано true, корректность ответа будет показана сразу */
     answersAtEnd: true, /* Если указано true, в конце будет список правильных ответов */
 },
 extraText: {

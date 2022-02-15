@@ -19,7 +19,7 @@ const quiz = {
       text: "Возможность выбрать несколько ответов",
       responses: [
         { text: "Glossary (Правильный)", correct: true },
-        { text: "Atlas (Правильный)", correct: true },
+        { text: "Atlas (Правильный)", correct: true }, 
         { text: "Index (Правильный)", correct: true },
         { text: "Captions" },
       ],
